@@ -80,3 +80,22 @@ err = await client.put(
   { headers: { authorization: 'user1' } }
 ).then(() => null, err => err);
 console.log(err.response.data);
+
+await client.post('/users', {
+  id: 'admin2',
+  name: 'Jane Admin',
+  roles: ['admin']
+});
+
+await client.put(
+  '/users/admin1/ban',
+  { banned: true },
+  { headers: { authorization: 'admin2' } }
+);
+
+err = await client.put(
+  '/threads/thread1/comment',
+  { body: 'test comment' },
+  { headers: { authorization: 'admin1' } }
+).then(() => null, err => err);
+console.log(err.response.data);

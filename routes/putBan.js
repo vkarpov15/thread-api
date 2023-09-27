@@ -16,6 +16,11 @@ module.exports = async function putBan(req, res) {
   if (!authorized) {
     throw new Error(`Not allowed to ban user ${req.params.id}`);
   }
+  // If banning an admin, make sure to remove the "admin" role first
+  if (user.roles.includes('admin')) {
+    await oso.delete('has_role', { type: 'User', id: user.id }, 'admin');
+    user.roles = user.roles.filter(role => role !== 'admin');
+  }
   user.banned = !!req.body.banned;
   await oso.bulk(
     [['is_banned', { type: 'User', id: user.id }, null]],
